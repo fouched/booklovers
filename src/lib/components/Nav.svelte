@@ -64,4 +64,8 @@
 	.nav-item > span {
 		cursor: pointer;
 	}
+
+	.active {
+		font-weight: bold;
+	}
 </style>
