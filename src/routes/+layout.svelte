@@ -2,6 +2,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Nav from '$lib/components/Nav.svelte'
 import messageStore from '$lib/stores/messages.stores'
+import '$lib/firebase/firebase.client'
 
 const hideFlash = () => {
 	messageStore.hide()
