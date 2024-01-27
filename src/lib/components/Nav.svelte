@@ -1,9 +1,23 @@
 <script>
 	import { page } from '$app/stores';
-	let isLoggedIn = true
+	import authStore from '$lib/stores/auth.store';
+	import { logout } from '$lib/firebase/auth.client';
+	import messagesStores from '$lib/stores/messages.stores';
+	import { goto } from '$app/navigation';
+	
 	let isOpen = false
 	const toggleMenu = () => {
 		isOpen = !isOpen
+	}
+
+	const onLogOut = async () => {
+		try {
+			await logout()	
+			goto('/')
+		} catch (error) {
+			messagesStores.showError()
+		}
+		
 	}
 </script>
 
@@ -25,7 +39,7 @@
 		<!-- use class binding to display menu or just hamburger-->
 		<div class:show={isOpen} class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav">
-				{#if isLoggedIn }
+				{#if $authStore.isLoggedIn }
 					<li class="nav-item">
 						<a class:active={$page.url.pathname === '/'} class="nav-link" aria-current="page" href="/">Home</a>
 					</li>
@@ -39,7 +53,7 @@
 						<a class:active={$page.url.pathname === '/about'} class="nav-link" href="/about">About</a>
 					</li>
 					<li class="nav-item">
-						<span class="nav-link">Logout</span>
+						<span on:click={onLogOut} class="nav-link">Logout</span>
 					</li>
 				{:else}
 					<li class="nav-item">

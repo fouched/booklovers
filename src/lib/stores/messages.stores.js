@@ -7,11 +7,14 @@ export default {
 	subscribe: messageStore.subscribe,
 	showError: function (message = PUBLIC_ERROR_MESSAGE) {
 		messageStore.set({show: true, message, type: 'error'})
+		setTimeout(() => {
+			messageStore.set({ show: false, message: '', type: 'success' });
+		}, 5000);
 	},
 	showSuccess: function (/** @type {any} */ message) {
 		messageStore.set({show: true, message, type: 'success'})
 	},
 	hide: function () {
-		messageStore.set({ show: false, message: '', type: 'success' });
+		messageStore.set({ show: false, message: '', type: 'success' })
 	}
 }

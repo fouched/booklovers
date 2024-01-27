@@ -7,6 +7,7 @@ import '$lib/firebase/firebase.client'
 const hideFlash = () => {
 	messageStore.hide()
 }
+
 </script>
 <Nav />
 <main class="container">
