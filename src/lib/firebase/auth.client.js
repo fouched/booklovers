@@ -1,14 +1,21 @@
-import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithEmailAndPassword, 
-	signInWithPopup, signOut, sendPasswordResetEmail } from 'firebase/auth'
+import {
+	createUserWithEmailAndPassword,
+	getAuth,
+	GoogleAuthProvider,
+	signInWithEmailAndPassword,
+	signInWithPopup,
+	signOut,
+	sendPasswordResetEmail
+} from 'firebase/auth';
 
 export async function loginWithGoogle() {
-	const auth = getAuth()
-	const userCredential = await signInWithPopup(auth, new GoogleAuthProvider())
-	return userCredential.user
+	const auth = getAuth();
+	const userCredential = await signInWithPopup(auth, new GoogleAuthProvider());
+	return userCredential.user;
 }
 
 export async function logout() {
-	await signOut(getAuth())
+	await signOut(getAuth());
 }
 
 /**
@@ -33,5 +40,18 @@ export async function loginWithEmailAndPassword(email, password) {
  * @param {string} email
  */
 export async function sendPasswordReset(email) {
-	await sendPasswordResetEmail(getAuth(), email)
+	await sendPasswordResetEmail(getAuth(), email);
+}
+
+export async function sendJWTToken() {
+	const auth = getAuth();
+	const user = auth.currentUser;
+
+	if (!user) return;
+
+	const token = await user.getIdToken(true);
+	await fetch('/token', {
+		method: 'POST',
+		body: JSON.stringify({ token, email: user.email })
+	});
 }

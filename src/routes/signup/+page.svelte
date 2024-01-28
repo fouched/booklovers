@@ -1,9 +1,11 @@
 <script>
+	import { page } from '$app/stores'
 	import { goto } from '$app/navigation';
 	import AuthForm from '$lib/components/auth/AuthForm.svelte'
 	import LoginWithGoogle from '$lib/components/auth/LoginWithGoogle.svelte'
 	import { registerWithEmailAndPassword } from '$lib/firebase/auth.client';
 	import messageStore from '$lib/stores/messages.stores'
+	import { afterLogin } from '$lib/helpers/route.helper';
 
 	const register = async (/** @type {any} */ event) => {
 		
@@ -24,6 +26,7 @@
 			}
 
 			const user = await registerWithEmailAndPassword(email, password)
+			await afterLogin($page.url, user.uid)				
 
 		} catch (/** @type {any} */ e) {
 			if (e.code === 'auth/email-already-in-use') {

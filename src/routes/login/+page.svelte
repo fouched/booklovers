@@ -1,8 +1,9 @@
 <script>
-	import { goto } from '$app/navigation';
+	import { page } from '$app/stores'
 	import AuthForm from '$lib/components/auth/AuthForm.svelte'
 	import LoginWithGoogle from '$lib/components/auth/LoginWithGoogle.svelte'
 	import { loginWithEmailAndPassword } from '$lib/firebase/auth.client'
+	import { afterLogin } from '$lib/helpers/route.helper';
 	import messageStore from '$lib/stores/messages.stores'
 
 	// @ts-ignore
@@ -16,7 +17,7 @@
 						
 			// @ts-ignore
 			const user = await loginWithEmailAndPassword(email, password)
-			goto('/')
+			await afterLogin($page.url, user.uid)
 
 		} catch (e) {
 			// @ts-ignore
