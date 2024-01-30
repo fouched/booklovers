@@ -1,12 +1,47 @@
 <script>
-import 'bootstrap/dist/css/bootstrap.min.css'
-import Nav from '$lib/components/Nav.svelte'
-import messageStore from '$lib/stores/messages.stores'
-import '$lib/firebase/firebase.client'
+	import 'bootstrap/dist/css/bootstrap.min.css'
+	import Nav from '$lib/components/Nav.svelte'
+	import messageStore from '$lib/stores/messages.stores'
+	import '$lib/firebase/firebase.client'
+	import { onMount } from 'svelte'
+	import { sendJWTToken } from '$lib/firebase/auth.client';
+	/**
+	 * @type {number | NodeJS.Timeout | undefined}
+	 */
+	let timerId;
 
-const hideFlash = () => {
-	messageStore.hide()
-}
+	async function sendServerToken() {
+		try {
+			await sendJWTToken()		
+		} catch (error) {
+			clearInterval(timerId)
+			console.log(error)
+		}
+		
+	}
+
+	// @ts-ignore
+	onMount(async () => {
+		try {
+			await sendServerToken()
+			timerId = setInterval(async () => {
+				sendServerToken()
+			}, 1000 * 60 * 10) // 10 minutes
+		} catch (error) {
+			console.log(error)
+			messageStore.showError();
+		}
+
+		// for layout this is not really required
+		// but still good practice to clear timers
+		return () => {
+			clearInterval(timerId)
+		}
+	})
+
+	const hideFlash = () => {
+		messageStore.hide()
+	}
 
 </script>
 <Nav />
