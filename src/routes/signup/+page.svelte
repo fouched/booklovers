@@ -7,7 +7,8 @@
 	import messageStore from '$lib/stores/messages.stores'
 	import { afterLogin } from '$lib/helpers/route.helper';
 
-	const register = async (/** @type {any} */ event) => {
+	// @ts-ignore
+	const register = async (event) => {
 		
 		const formData = new FormData(event.target)
 		const email = formData.get('email')?.toString()

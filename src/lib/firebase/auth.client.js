@@ -16,6 +16,7 @@ export async function loginWithGoogle() {
 
 export async function logout() {
 	await signOut(getAuth());
+	await fetch('/logout')
 }
 
 /**
@@ -23,8 +24,8 @@ export async function logout() {
  * @param {string} password
  */
 export async function registerWithEmailAndPassword(email, password) {
-	const userCredential = await createUserWithEmailAndPassword(getAuth(), email, password);
-	return userCredential.user;
+	const userCredential = await createUserWithEmailAndPassword(getAuth(), email, password)
+	return userCredential.user
 }
 
 /**
@@ -32,24 +33,24 @@ export async function registerWithEmailAndPassword(email, password) {
  * @param {string} password
  */
 export async function loginWithEmailAndPassword(email, password) {
-	const userCredential = await signInWithEmailAndPassword(getAuth(), email, password);
-	return userCredential.user;
+	const userCredential = await signInWithEmailAndPassword(getAuth(), email, password)
+	return userCredential.user
 }
 
 /**
  * @param {string} email
  */
 export async function sendPasswordReset(email) {
-	await sendPasswordResetEmail(getAuth(), email);
+	await sendPasswordResetEmail(getAuth(), email)
 }
 
 export async function sendJWTToken() {
-	const auth = getAuth();
-	const user = auth.currentUser;
+	const auth = getAuth()
+	const user = auth.currentUser
 
-	if (!user) return;
+	if (!user) return
 
-	const token = await user.getIdToken(true);
+	const token = await user.getIdToken(true)
 	await fetch('/token', {
 		method: 'POST',
 		body: JSON.stringify({ token, email: user.email })

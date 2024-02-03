@@ -18,6 +18,7 @@ export async function POST({ request, cookies }) {
 		}
 
 		return json({ message: 'Access Denied' }, { status: 403 });
+		
 	} catch (error) {
 		return json({ message: 'Access Denied'}, {status: 403})
 	}
