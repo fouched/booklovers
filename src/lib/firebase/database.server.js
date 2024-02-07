@@ -63,3 +63,4 @@ export async function getBook(id) {
 		return { id: bookRef.id, ...bookRef.data()}
 	}
 }
+
