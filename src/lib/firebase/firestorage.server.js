@@ -24,7 +24,6 @@ export async function saveFileToBucket(file, destination) {
 async function saveFileToDisk(file) {
 
 	const arrayBuffer = await file.arrayBuffer()
-	console.log(arrayBuffer, 'arrayBuffer');
 	const buffer = Buffer.from(arrayBuffer)
 	const filePath = path.join(tmpdir(), uuidv4())
 

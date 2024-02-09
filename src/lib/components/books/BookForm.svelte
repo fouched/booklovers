@@ -41,7 +41,7 @@
             name="short_description"
             class="form-control"
             id="short_description"
-            error_small_picture
+            value={form?.short_description || ''}
             class:is-invalid={form?.error_short_description}
             placeholder="Enter short description"
         />

@@ -1,17 +1,24 @@
 // @ts-nocheck
 import yup from 'yup';
 
-export default async function validate(formData) {
+export default async function validate(formData, edit = false) {
 	const schema = yup.object({
-		title: yup.string().required('Book title is required').min(2, 'Book Title must be at least 2 characters').max(100),
+		title: yup
+			.string()
+			.required('Book title is required')
+			.min(2, 'Book Title must be at least 2 characters')
+			.max(100),
 		author: yup.string().required('Author is required').min(2).max(200),
 		short_description: yup.string().required('Short description is required').min(5).max(200),
 		description: yup.string().required('Description is required').min(5).max(5000),
 		small_picture: yup
 			.mixed()
-			.required()
+			.nullable()
+			.test('fileRequired', 'Small picture required', (value) => {
+				return value !== null || edit;
+			})
 			.test('fileType', 'The file must be an image', (value) => {
-				if (value && value.type) {
+				if (value && value.type && value.size) {
 					return ['image/png', 'image/jpeg'].includes(value.type);
 				}
 				return true;
@@ -24,9 +31,11 @@ export default async function validate(formData) {
 			}),
 		main_picture: yup
 			.mixed()
-			.required()
+			.test('fileRequired', 'Main picture required', (value) => {
+				return value !== null || edit;
+			})
 			.test('fileType', 'The file must be an image', (value) => {
-				if (value && value.type) {
+				if (value && value.type && value.size) {
 					return ['image/png', 'image/jpeg'].includes(value.type);
 				}
 				return true;
@@ -39,6 +48,7 @@ export default async function validate(formData) {
 			})
 	});
 
+	
 	const data = {
 		title: formData.get('title'),
 		author: formData.get('author'),
