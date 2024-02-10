@@ -15,4 +15,4 @@ export const actions = {
 
 		return fail(422, data);
 	}
-};
+}
