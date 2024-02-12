@@ -1,5 +1,6 @@
 /**
  * @typedef {Object} Book
+ * @property {string} id
  * @property {string} title
  * @property {string} author
  * @property {string} description
@@ -9,6 +10,7 @@
  * @property {string} user_id
  * @property {number} likes
  * @property {number} createdAt
+ * @property {boolean} likedBook
  */
 
 import { db } from '$lib/firebase/firebase.server';
@@ -54,15 +56,31 @@ export async function addBook(book, userId) {
 
 /**
  * @param {string} id
+ * @param {string | null} userId
  * @returns {Promise<Book | undefined>}
  */
-export async function getBook(id) {
+export async function getBook(id, userId = null) {
+
 	const bookRef = await db.collection('books').doc(id).get();
 
 	if (bookRef.exists) {
-		return { id: bookRef.id, ...bookRef.data() };
+		const user = userId ? await getUser(userId) : null
+		const likedBook = user?.bookIds?.includes(id) || false
+		
+		// @ts-ignore
+		return { id: bookRef.id, ...bookRef.data(), likedBook };
 	}
 }
+
+/**
+ * @param {string} userId
+ */
+export async function getUser(userId) {
+
+	const user = await db.collection('users').doc(userId).get()
+	return user?.data()
+}
+
 
 /**
  * @param {string} id
@@ -100,4 +118,38 @@ export async function editBook(id, form, userId) {
 
 		bookRef.update({ small_picture: smallPicUrl });
 	}
+}
+
+/**
+ * @param {string} bookId
+ * @param {string} userId
+ * @returns {Promise<Book | undefined>}
+ */
+export async function toogleBookLike(bookId, userId) {
+	const bookDoc = db.collection('books').doc(bookId)
+	const userDoc = db.collection('users').doc(userId)
+
+	const user = await userDoc.get()
+	const userData = user.data()
+
+	// @ts-ignore
+	if (userData.bookIds && userData.bookIds.includes(bookId)) {
+		// unlike the book
+		await userDoc.update({
+			bookIds: admin.firestore.FieldValue.arrayRemove(bookId)
+		})
+		await bookDoc.update({
+			likes: admin.firestore.FieldValue.increment(-1)
+		})
+	} else {
+		// like the book
+		await userDoc.update({
+			bookIds: admin.firestore.FieldValue.arrayUnion(bookId)
+		});
+		await bookDoc.update({
+			likes: admin.firestore.FieldValue.increment(1)
+		});
+	}
+
+	return await getBook(bookId, userId)
 }
