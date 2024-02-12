@@ -1,3 +1,6 @@
+<!-- svelte-ignore missing-declaration -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <script>
 // @ts-nocheck
 	import messagesStores from '$lib/stores/messages.stores';
@@ -31,9 +34,6 @@
 			<img src="/loading.gif" width="18px" height="18px" alt="" />
     {:else if book.likedBook }
 			<span>{book.likes}</span>
-			<!-- svelte-ignore missing-declaration -->
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="16"
@@ -51,8 +51,6 @@
 			</svg>
     {:else }
 			<span>{book.likes}</span>
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="16"

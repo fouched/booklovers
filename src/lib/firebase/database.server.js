@@ -16,6 +16,7 @@
 import { db } from '$lib/firebase/firebase.server';
 import admin from 'firebase-admin';
 import { saveFileToBucket } from './firestorage.server';
+import { PAGE_SIZE } from '$env/static/private';
 
 /**
  * @param {Book} book
@@ -61,14 +62,46 @@ export async function addBook(book, userId) {
  */
 export async function getBook(id, userId = null) {
 
-	const bookRef = await db.collection('books').doc(id).get();
+	const bookRef = await db.collection('books').doc(id).get()
 
 	if (bookRef.exists) {
 		const user = userId ? await getUser(userId) : null
 		const likedBook = user?.bookIds?.includes(id) || false
 		
 		// @ts-ignore
-		return { id: bookRef.id, ...bookRef.data(), likedBook };
+		return { id: bookRef.id, ...bookRef.data(), likedBook }
+	}
+}
+
+/**
+ * @param {string} userId
+ * @param {number} page
+ */
+export async function getBooks(userId, page = 1) {
+	const user = userId ? await getUser(userId) : null
+	const bookCount = await db.collection('books').count().get()
+	const totalBooks = bookCount.data().count
+
+	// + is used below to turn PAGE_SIZE env var into a number
+	const next = totalBooks > page * +PAGE_SIZE;
+	const previous = page > 1
+
+	const books = await db
+		.collection('books')
+		.limit(+PAGE_SIZE)
+		.offset((page - 1) * +PAGE_SIZE)
+		.orderBy('created_at', 'desc')
+		.get()
+
+	const likedBooks = books.docs.map((d) => {
+		const likedBook = user?.bookIds?.includes(d.id) || false
+		return { ...d.data(), id: d.id, likedBook }
+	})
+
+	return {
+		books: likedBooks,
+		next,
+		previous
 	}
 }
 
