@@ -12,7 +12,7 @@
 	</div>
 	<div class="col col-12 col-sm-6 col-md-8">
 		<h2>Title: {book.title}</h2>
-		<h2>Author: {book.author}</h2>
+		<h4>Author: {book.author}</h4>
 		<p>
 			{book.short_description}
 		</p>
