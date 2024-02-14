@@ -1,1 +1,9 @@
-<h1>My Books</h1>
+<script>
+	import Book from '$lib/components/books/Book.svelte'
+
+	export let data
+</script>
+
+{#each data.books as book (book.id)}
+	<Book {book} />
+{/each}

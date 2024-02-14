@@ -56,6 +56,24 @@ export async function addBook(book, userId) {
 }
 
 /**
+ * @param {string} userId
+ */
+export async function getBooksForUser(userId) {
+	const user = await getUser(userId)
+
+	const books = await db.collection('books')
+									.where('user_id', '==', userId)
+									.orderBy('created_at', 'desc')
+									.get()
+	
+	return books.docs.map(d => {
+		const likedBook = user?.bookIds?.includes(d.id) || false
+		return { id: d.id, ...d.data(), likedBook}
+	})
+
+}
+
+/**
  * @param {string} id
  * @param {string | null} userId
  * @returns {Promise<Book | undefined>}
