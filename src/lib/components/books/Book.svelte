@@ -1,12 +1,18 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-img-redundant-alt -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <script>
 // @ts-nocheck
+	import { goto } from '$app/navigation';
 	import Like from '$lib/components/books/Like.svelte'
 
 	export let book
+
+	async function goToBook() {
+		await goto(`/book/${book.id}`)
+	}
 </script>
-<div class="row mt-2">
+<div on:click={goToBook} class="row mt-2">
 	<div class="col col-12 col-sm-6 col-md-4">		
 		<img src="{book.small_picture}" alt={book.title}/>
 	</div>
@@ -16,7 +22,7 @@
 		<p>
 			{book.short_description}
 		</p>
-		<Like {book}/>
+		<Like {book} on:toggleLike/>
 	</div>
 </div>
 

@@ -5,9 +5,13 @@
 // @ts-nocheck
 	import messagesStores from '$lib/stores/messages.stores';
 	import authStore from '$lib/stores/auth.store'
+	import { createEventDispatcher } from 'svelte'
 
 	export let book
 	export let textAlign = "left"
+
+
+	const dispath = createEventDispatcher()
 
 	let submitting = false
 
@@ -21,6 +25,7 @@
 			submitting = true
 			const response = await fetch(`/like/${book.id}`)
 			book = await response.json()
+			dispath('toggleLike', { id: book.id })
 		} catch (error) {
 			messagesStores.showError()
 		}
@@ -41,7 +46,7 @@
 				fill="currentColor"
 				class="bi bi-arrow-through-heart-fill"
 				viewBox="0 0 16 16"
-				on:click={toggleLike}
+				on:click|stopPropagation={toggleLike}
 				class:not-logged-in={!$authStore.isLoggedIn}
 			>
 				<path
@@ -58,7 +63,7 @@
 				fill="currentColor"
 				class="bi bi-arrow-through-heart"
 				viewBox="0 0 16 16"
-				on:click={toggleLike}
+				on:click|stopPropagation={toggleLike}
 				class:not-logged-in={!$authStore.isLoggedIn}
 			>
 				<path

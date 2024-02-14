@@ -74,6 +74,28 @@ export async function getBooksForUser(userId) {
 }
 
 /**
+ * @param {string} userId
+ */
+export async function getLikedBooks(userId) {
+	const user = await getUser(userId)
+
+	const bookIds = user?.bookIds || []
+
+	if (bookIds.length === 0) {
+		return [];
+	}
+
+	const books = await db.collection('books')
+									.where(admin.firestore.FieldPath.documentId(), 'in', bookIds)
+									.get()
+	
+	return books.docs.map(d => {
+		return { id: d.id, ...d.data(), likedBook: true}
+	})
+
+}
+
+/**
  * @param {string} id
  * @param {string | null} userId
  * @returns {Promise<Book | undefined>}
