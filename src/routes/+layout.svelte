@@ -1,11 +1,35 @@
 <script>
+// @ts-nocheck
+
 	import 'bootstrap/dist/css/bootstrap.min.css'
 	import Nav from '$lib/components/Nav.svelte'
 	import messageStore from '$lib/stores/messages.stores'
 	import '$lib/firebase/firebase.client'
-	import { onMount } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 	import { sendJWTToken } from '$lib/firebase/auth.client';
 	import authStore from '$lib/stores/auth.store.js';
+	import bookNotifyStore from '$lib/stores/book-notify.store'
+
+	let notifyBook
+	const unsub = bookNotifyStore.subscribe(book => {
+		if (!$authStore.isLoggedIn) {
+			notifyBook = book
+			return
+		}
+
+		if ($authStore.userId !== book.user_id) {
+			notifyBook = book
+			return
+		}
+	})
+
+	onDestroy(() => {
+		unsub()
+	})
+
+	function closeFlash() {
+		notifyBook = null
+	}
 
 	export let data
 
@@ -28,7 +52,6 @@
 		
 	}
 
-	// @ts-ignore
 	onMount(async () => {
 		try {
 			await sendServerToken()
@@ -69,5 +92,27 @@
 			{/if}
 	</div>	
 	<slot />
+	{#if notifyBook} 
+	<div
+			class="toast show position-fixed top-0 end-0 m-3"
+			role="alert"
+			aria-live="assertive"
+			aria-atomic="true"
+		>
+			<div class="toast-header">
+				<strong class="me-auto">New Book</strong>
+				<button
+					on:click={closeFlash}
+					type="button"
+					class="btn-close"
+					data-bs-dismiss="toast"
+					aria-label="Close"
+				/>
+			</div>
+			<div class="toast-body">
+				Book <a href="/book/{notifyBook.id}">{notifyBook.title}</a> just created!!
+			</div>
+	</div>	
+	{/if}
 </main>
 
