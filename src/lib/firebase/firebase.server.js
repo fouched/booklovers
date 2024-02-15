@@ -1,10 +1,12 @@
+import { GOOGLE_SERVICE_ACCOUNT } from '$env/static/private'
 import admin from 'firebase-admin'
-import serviceAccount from '$lib/firebase/firebase.server.json'
+// import serviceAccount from '$lib/firebase/firebase.server.json'
 
 if (admin.apps.length === 0) {
 	admin.initializeApp({
 		// @ts-ignore
-		credential: admin.credential.cert(serviceAccount)
+		// credential: admin.credential.cert(serviceAccount)
+		credential: admin.credential.cert(JSON.parse(GOOGLE_SERVICE_ACCOUNT))
 	})
 }
 
