@@ -1,9 +1,10 @@
 <script>
 	import { page } from '$app/stores';
-	import authStore from '$lib/stores/auth.store';
 	import { logout } from '$lib/firebase/auth.client';
 	import messagesStores from '$lib/stores/messages.stores';
 	import { goto } from '$app/navigation';
+
+	export let isLoggedIn = false
 	
 	let isOpen = false
 	const toggleMenu = () => {
@@ -39,7 +40,7 @@
 		<!-- use class binding to display menu or just hamburger-->
 		<div class:show={isOpen} class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav">
-				{#if $authStore.isLoggedIn }
+				{#if isLoggedIn }
 					<li class="nav-item">
 						<a class:active={$page.url.pathname === '/'} class="nav-link" aria-current="page" href="/">Home</a>
 					</li>
